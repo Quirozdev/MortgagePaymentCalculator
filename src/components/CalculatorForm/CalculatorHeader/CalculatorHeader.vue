@@ -1,9 +1,17 @@
-<script setup></script>
+<script setup>
+import { formState } from "../formState";
+
+function clearAll() {
+  formState.clear();
+}
+</script>
 
 <template>
   <section class="header">
     <h3 class="title">Mortgage Calculator</h3>
-    <button class="clear-all-btn">Clear All</button>
+    <button class="clear-all-btn" type="button" @click="clearAll">
+      Clear All
+    </button>
   </section>
 </template>
 

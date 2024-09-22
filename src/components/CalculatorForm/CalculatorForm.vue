@@ -1,11 +1,13 @@
 <script setup>
-import { ref, watch } from "vue";
 import { formState } from "./formState";
 import CalculatorField from "./CalculatorField/CalculatorField.vue";
 import CalculatorHeader from "./CalculatorHeader/CalculatorHeader.vue";
 import RadioButtonGroup from "./RadioButtonsGroup/RadioButtonGroup.vue";
+import CalculateButton from "./CalculateButton/CalculateButton.vue";
+import CalculatorLabel from "./CalculatorLabel/CalculatorLabel.vue";
+import { Mortgage } from "@/services/mortgageCalculator";
 
-const radioGroupOptions = ref([
+const radioGroupOptions = [
   {
     label: "Repayment",
     value: "repayment",
@@ -14,51 +16,71 @@ const radioGroupOptions = ref([
     label: "Interest Only",
     value: "interest-only",
   },
-]);
+];
 
-watch(formState, (value) => {
-  console.log(value);
-});
+function onCalculateRepayments() {
+  if (formState.thereAreErrors()) {
+    return;
+  }
+  console.log(formState.values);
+  const mortgage = new Mortgage(
+    formState.values.mortgageAmount,
+    formState.values.mortgageTerm,
+    formState.values.interestRate
+  );
+
+  console.log(mortgage.calculateMonthlyRepayment());
+  console.log(mortgage.calculateTotalRepay());
+  console.log(mortgage.calculateInterestOnlyPayment());
+}
 </script>
 
 <template>
-  <section class="calculator-container">
+  <form
+    @submit.prevent="onCalculateRepayments"
+    class="calculator-container"
+    novalidate
+  >
     <CalculatorHeader />
     <CalculatorField
-      id="mortgage-amount"
+      id="mortgageAmount"
       label="Mortgage Amount"
       appended-content="&#xa3;"
       appendedContentDirection="left"
       input-type="number"
-      @value-change="(newValue) => (formState.mortgageAmount = newValue)"
+      @value-change="(newValue) => (formState.values.mortgageAmount = newValue)"
     />
     <div class="row">
       <CalculatorField
-        id="mortgage-term"
+        id="mortgageTerm"
         label="Mortgage Term"
         appended-content="years"
         appendedContentDirection="right"
         input-type="number"
-        @value-change="(newValue) => (formState.mortgageTerm = newValue)"
+        @value-change="(newValue) => (formState.values.mortgageTerm = newValue)"
       />
       <CalculatorField
-        id="interest-rate"
+        id="interestRate"
         label="Interest Rate"
         appended-content="%"
         appendedContentDirection="right"
         input-type="number"
-        @value-change="(newValue) => (formState.interestRate = newValue)"
+        @value-change="(newValue) => (formState.values.interestRate = newValue)"
       />
     </div>
-    <RadioButtonGroup
-      name="mortgage-type"
-      group-title="Mortgage Type"
-      :options="radioGroupOptions"
-      @option-selected="
-        (selectedValue) => (formState.mortgageType = selectedValue)
-      "
-    />
-  </section>
+    <div class="mortgage-type-container">
+      <CalculatorLabel text="Mortgage Type" />
+      <RadioButtonGroup
+        name="mortgageType"
+        group-title="Mortgage Type"
+        :options="radioGroupOptions"
+        @option-selected="
+          (selectedValue) => (formState.values.mortgageType = selectedValue)
+        "
+      />
+    </div>
+    <CalculateButton />
+  </form>
 </template>
 
 <style scoped>
@@ -66,6 +88,9 @@ watch(formState, (value) => {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
 }
 
 .row {
@@ -77,5 +102,11 @@ watch(formState, (value) => {
 
 .row > * {
   flex: 1;
+}
+
+.mortgage-type-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 </style>

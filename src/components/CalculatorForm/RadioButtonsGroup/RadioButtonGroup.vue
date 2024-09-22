@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from "vue";
-import CalculatorLabel from "../CalculatorLabel/CalculatorLabel.vue";
+import { computed } from "vue";
+import ErrorMsg from "../ErrorMsg/ErrorMsg.vue";
+import { formState } from "../formState";
 
-defineProps({
+const props = defineProps({
   groupTitle: {
     type: String,
     required: true,
@@ -19,17 +20,19 @@ defineProps({
 
 const emit = defineEmits(["optionSelected"]);
 
-const optionSelected = ref(null);
+const optionSelected = computed(() => {
+  return formState.values.mortgageType;
+});
 
 function onOptionSelected(newValue) {
   emit("optionSelected", newValue);
-  optionSelected.value = newValue;
+  formState.values[props.name] = newValue;
+  formState.validateRequiredValue(props.name);
 }
 </script>
 
 <template>
   <div class="container">
-    <CalculatorLabel text="Mortgage Type" />
     <div v-for="option in options" :key="option.value">
       <div
         class="radio-button-container"
@@ -57,6 +60,7 @@ function onOptionSelected(newValue) {
         }}</label>
       </div>
     </div>
+    <ErrorMsg :msg="formState.errors[name]" />
   </div>
 </template>
 
@@ -86,6 +90,6 @@ function onOptionSelected(newValue) {
 .radio-label,
 input[type="radio"] {
   cursor: pointer;
-  accent-color: var(--lime);
+  accent-color: #999a00;
 }
 </style>

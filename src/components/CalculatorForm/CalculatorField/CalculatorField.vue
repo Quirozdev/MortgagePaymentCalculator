@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import CalculatorLabel from "../CalculatorLabel/CalculatorLabel.vue";
+import { formState } from "../formState";
+import ErrorMsg from "../ErrorMsg/ErrorMsg.vue";
 
-defineProps({
+const props = defineProps({
   id: {
     type: String,
   },
@@ -25,18 +27,21 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["valueChange"]);
+// const emit = defineEmits(["valueChange"]);
 
-const inputValue = ref("");
 const focus = ref(false);
+const isError = computed(() => {
+  return formState.errors[props.id] != null;
+});
 
 function toggleFocus() {
   focus.value = !focus.value;
 }
 
 function onValueChange(e) {
-  inputValue.value = e.target.value;
-  emit("valueChange", inputValue.value);
+  formState.values[e.target.id] = e.target.value;
+  // emit("valueChange", inputValue.value);
+  formState.validateRequiredValue(e.target.id);
 }
 </script>
 
@@ -45,15 +50,18 @@ function onValueChange(e) {
     <CalculatorLabel :for-id="id" :text="label" />
     <div
       class="input-and-appended-content-container"
-      :class="{ reversed: appendedContentDirection == 'right' }"
+      :class="{
+        reversed: appendedContentDirection == 'right',
+        error: isError,
+      }"
     >
-      <div class="appended-content" :class="{ focus: focus }">
+      <div class="appended-content" :class="{ focus: focus, error: isError }">
         {{ appendedContent }}
       </div>
       <input
         class="field"
         :id="id"
-        :value="inputValue"
+        :value="formState.values[id]"
         @input="onValueChange"
         v-bind:type="inputType"
         v-on:focus="toggleFocus"
@@ -62,6 +70,7 @@ function onValueChange(e) {
         required
       />
     </div>
+    <ErrorMsg :msg="formState.errors[id]" />
   </div>
 </template>
 
@@ -69,7 +78,7 @@ function onValueChange(e) {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.7rem;
 }
 
 .input-and-appended-content-container {
@@ -79,20 +88,27 @@ function onValueChange(e) {
   align-items: center;
   border: 1px solid var(--slate-500);
   border-radius: 8px;
+  overflow: hidden;
   transition: border-color 0.5s ease-in-out;
+}
+
+.input-and-appended-content-container.error {
+  border: 1px solid var(--red);
 }
 
 .reversed {
   flex-direction: row-reverse;
 }
 
-.reversed .appended-content {
-  border-radius: 0px 8px 8px 0px;
+.appended-content.error {
+  background-color: var(--red);
+  color: white;
 }
 
 .field {
   flex: 1;
   border: none;
+  border-radius: 8px;
   font-family: "PlusJakartaSans";
   font-size: 1rem;
   font-weight: bold;
@@ -113,13 +129,13 @@ function onValueChange(e) {
   color: var(--slate-700);
   font-weight: bold;
   background-color: var(--slate-100);
-  border-radius: 8px 0px 0px 8px;
   padding: 0.75rem;
   transition: background-color 0.5s ease-in-out;
 }
 
 .appended-content.focus {
   background-color: var(--lime);
+  color: var(--slate-700);
 }
 
 .input-and-appended-content-container:has(.field.focus) {
