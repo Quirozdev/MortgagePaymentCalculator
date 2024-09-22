@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "homepage": "https://quirozdev.github.io/",
+  "homepage": "https://github.com/Quirozdev/MortgagePaymentCalculator",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
