@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import ErrorMsg from "../ErrorMsg/ErrorMsg.vue";
-import { formState } from "../formState";
+import { formState } from "../../../stores/formState";
 
 const props = defineProps({
   groupTitle: {

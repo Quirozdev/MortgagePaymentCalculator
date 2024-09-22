@@ -1,5 +1,5 @@
 <script setup>
-import { formState } from "../formState";
+import { formState } from "../../../stores/formState";
 
 function clearAll() {
   formState.clear();

@@ -20,8 +20,9 @@
 <style scoped>
 .attribution {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.2rem;
-  margin-top: 2rem;
+  padding: 1.5rem;
 }
 </style>

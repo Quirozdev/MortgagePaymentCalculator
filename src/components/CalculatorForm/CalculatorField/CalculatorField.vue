@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import CalculatorLabel from "../CalculatorLabel/CalculatorLabel.vue";
-import { formState } from "../formState";
+import { formState } from "../../../stores/formState";
 import ErrorMsg from "../ErrorMsg/ErrorMsg.vue";
 
 const props = defineProps({
@@ -61,6 +61,7 @@ function onValueChange(e) {
       <input
         class="field"
         :id="id"
+        :name="id"
         :value="formState.values[id]"
         @input="onValueChange"
         v-bind:type="inputType"

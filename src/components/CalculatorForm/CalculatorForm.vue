@@ -1,11 +1,12 @@
 <script setup>
-import { formState } from "./formState";
+import { formState } from "../../stores/formState";
 import CalculatorField from "./CalculatorField/CalculatorField.vue";
 import CalculatorHeader from "./CalculatorHeader/CalculatorHeader.vue";
 import RadioButtonGroup from "./RadioButtonsGroup/RadioButtonGroup.vue";
 import CalculateButton from "./CalculateButton/CalculateButton.vue";
 import CalculatorLabel from "./CalculatorLabel/CalculatorLabel.vue";
 import { Mortgage } from "@/services/mortgageCalculator";
+import { results } from "@/stores/resultsState";
 
 const radioGroupOptions = [
   {
@@ -20,18 +21,20 @@ const radioGroupOptions = [
 
 function onCalculateRepayments() {
   if (formState.thereAreErrors()) {
+    results.mortgage = null;
     return;
   }
-  console.log(formState.values);
-  const mortgage = new Mortgage(
+  // console.log(formState.values);
+  results.mortgage = new Mortgage(
     formState.values.mortgageAmount,
     formState.values.mortgageTerm,
-    formState.values.interestRate
+    formState.values.interestRate,
+    formState.values.mortgageType
   );
 
-  console.log(mortgage.calculateMonthlyRepayment());
-  console.log(mortgage.calculateTotalRepay());
-  console.log(mortgage.calculateInterestOnlyPayment());
+  // console.log(mortgage.calculateMonthlyRepayment());
+  // console.log(mortgage.calculateTotalRepay());
+  // console.log(mortgage.calculateInterestOnlyPayment());
 }
 </script>
 
@@ -90,7 +93,7 @@ function onCalculateRepayments() {
   gap: 2rem;
   background-color: white;
   padding: 2rem;
-  border-radius: 1rem;
+  border-radius: 1rem 0rem 1rem 1rem;
 }
 
 .row {

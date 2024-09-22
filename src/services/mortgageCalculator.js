@@ -1,8 +1,9 @@
 export class Mortgage {
-  constructor(amount, yearsTerm, yearlyInterestRate) {
+  constructor(amount, yearsTerm, yearlyInterestRate, type) {
     this.amount = amount;
     this.yearsTerm = yearsTerm;
     this.yearlyInterestRate = yearlyInterestRate;
+    this.type = type;
   }
 
   calculateMonthlyRepayment() {
